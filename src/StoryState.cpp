@@ -5,9 +5,11 @@
 #include "Dice.h"
 #include <windows.h>
 #include <iostream>
+#include <fstream>
 
 StoryState::StoryState(Engine* engine, Player player)
-    : m_Engine(engine), m_Player(std::move(player)), m_SelectedIndex(0), m_IsRollingDice(false), m_RollTimer(0.0f)
+    : m_Engine(engine), m_Player(std::move(player)), m_SelectedIndex(0), m_IsRollingDice(false), m_RollTimer(0.0f),
+      m_CurrentArtFrame(0), m_ArtFrameTimer(0.0f)
 {
     // Load the JSON story
     if (!m_QuestManager.LoadStory("story.json")) {
@@ -75,6 +77,48 @@ void StoryState::Update(float deltaTime) {
     if (m_IsRollingDice) {
         m_RollTimer += deltaTime;
     }
+    
+    const QuestNode* node = m_QuestManager.GetCurrentNode();
+    if (node) {
+        if (node->ArtAssetPath != m_LoadedArtPath) {
+            LoadArtAsset(node->ArtAssetPath);
+        }
+    }
+    
+    if (m_ArtFrames.size() > 1) {
+        m_ArtFrameTimer += deltaTime;
+        if (m_ArtFrameTimer > 0.5f) {
+            m_ArtFrameTimer = 0.0f;
+            m_CurrentArtFrame = (m_CurrentArtFrame + 1) % m_ArtFrames.size();
+        }
+    }
+}
+
+void StoryState::LoadArtAsset(const std::string& filepath) {
+    m_LoadedArtPath = filepath;
+    m_ArtFrames.clear();
+    m_CurrentArtFrame = 0;
+    m_ArtFrameTimer = 0.0f;
+    
+    if (filepath.empty()) return;
+    
+    std::string fullPath = "assets/art/" + filepath;
+    std::ifstream file(fullPath);
+    if (!file.is_open()) return;
+    
+    std::string line;
+    std::string currentFrame;
+    while (std::getline(file, line)) {
+        if (line == "===FRAME===") {
+            m_ArtFrames.push_back(currentFrame);
+            currentFrame.clear();
+        } else {
+            currentFrame += line + "\n";
+        }
+    }
+    if (!currentFrame.empty()) {
+        m_ArtFrames.push_back(currentFrame);
+    }
 }
 
 void StoryState::Render(Renderer* renderer) {
@@ -94,6 +138,11 @@ void StoryState::Render(Renderer* renderer) {
 
     // Narrative Text
     renderer->DrawString(2, 4, node->NarrativeText.c_str(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+    
+    // Draw Art
+    if (!m_ArtFrames.empty()) {
+        renderer->DrawString(60, 4, m_ArtFrames[m_CurrentArtFrame].c_str(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+    }
     
     // Choices / Dice Roll Animation
     if (m_IsRollingDice) {

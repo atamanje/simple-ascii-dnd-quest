@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Dice.h"
 #include "MainMenuState.h"
+#include "ExplorationState.h"
 #include <windows.h>
 
 CharacterCreatorState::CharacterCreatorState(Engine* engine)
@@ -84,8 +85,12 @@ void CharacterCreatorState::ProcessInput() {
     }
     else if (m_Step == CreationStep::Confirm) {
         if (Input::IsKeyPressed(VK_RETURN)) {
-            // Wait for enter to return to main menu or transition to game
-            m_Engine->ChangeState(new MainMenuState(m_Engine));
+            // Instantiate the player and pass to session
+            Player* newPlayer = new Player(m_Name, (Species)m_SelectedSpeciesIndex, (CharacterClass)m_SelectedClassIndex, m_RolledStats);
+            m_Engine->GetSession()->SetPlayer(newPlayer);
+            
+            // Transition to ExplorationState
+            m_Engine->ChangeState(new ExplorationState(m_Engine));
         }
     }
 }
@@ -99,8 +104,6 @@ void CharacterCreatorState::Update(float deltaTime) {
 }
 
 void CharacterCreatorState::Render(Renderer* renderer) {
-    renderer->Clear();
-    
     renderer->DrawString(renderer->GetWidth() / 2 - 12, 2, "--- CHARACTER CREATION ---", FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
     int y = 5;
@@ -190,6 +193,4 @@ void CharacterCreatorState::Render(Renderer* renderer) {
         renderer->DrawString(renderer->GetWidth() / 2 - 15, renderer->GetHeight() - 4, "CHARACTER CREATED SUCCESSFULLY!", FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
         renderer->DrawString(renderer->GetWidth() / 2 - 10, renderer->GetHeight() - 3, "[ENTER] to return", FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
-    
-    renderer->Present();
 }

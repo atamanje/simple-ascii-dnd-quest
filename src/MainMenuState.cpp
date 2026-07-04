@@ -34,8 +34,6 @@ void MainMenuState::Update(float deltaTime) {
 }
 
 void MainMenuState::Render(Renderer* renderer) {
-    renderer->Clear();
-    
     // Draw Title
     renderer->DrawString(renderer->GetWidth() / 2 - 10, 5, "ASCII DND QUEST", FOREGROUND_RED | FOREGROUND_INTENSITY);
     
@@ -53,5 +51,4 @@ void MainMenuState::Render(Renderer* renderer) {
         renderer->DrawString(renderer->GetWidth() / 2 - 5, startY + (int)i, m_Options[i].c_str(), color);
     }
     
-    renderer->Present();
 }

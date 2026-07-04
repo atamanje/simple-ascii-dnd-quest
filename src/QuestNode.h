@@ -13,5 +13,6 @@ struct Choice {
 struct QuestNode {
     int ID;
     std::string NarrativeText;
+    std::string ArtAssetPath;
     std::vector<Choice> Choices;
 };

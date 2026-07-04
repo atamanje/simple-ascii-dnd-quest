@@ -29,5 +29,12 @@ private:
     int m_LastTotalResult;
     std::string m_RollMessage;
     
+    // Art rendering state
+    std::vector<std::string> m_ArtFrames;
+    int m_CurrentArtFrame;
+    float m_ArtFrameTimer;
+    std::string m_LoadedArtPath;
+    
     void ResolveChoice(const Choice& choice);
+    void LoadArtAsset(const std::string& filepath);
 };
