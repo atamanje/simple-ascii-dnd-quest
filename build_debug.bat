@@ -1,0 +1,1 @@
+msbuild AsciiQuest.sln /p:Configuration=Debug /p:Platform=x64
