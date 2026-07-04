@@ -21,6 +21,7 @@ bool QuestManager::LoadStory(const std::string& filepath) {
             QuestNode node;
             node.ID = nodeJson["id"].get<int>();
             node.NarrativeText = nodeJson["narrative"].get<std::string>();
+            node.ArtAssetPath = nodeJson.value("art", "");
             
             if (nodeJson.contains("choices")) {
                 for (const auto& choiceJson : nodeJson["choices"]) {
