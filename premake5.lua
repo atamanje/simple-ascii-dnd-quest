@@ -10,6 +10,10 @@ project "AsciiQuest"
     cppdialect "C++17"
     targetdir "bin/%{cfg.buildcfg}"
     
+    includedirs {
+        "vendor/json/include"
+    }
+
     files { "src/**.h", "src/**.cpp" }
 
     filter "configurations:Debug"
