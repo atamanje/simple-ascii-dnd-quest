@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "narrative": "You stand before a heavy, rusted iron door leading into the goblin caves. The hinges look weak.",
+      "choices": [
+        {
+          "description": "Kick the door down with brute force.",
+          "stat": "STR",
+          "dc": 12,
+          "success_node": 2,
+          "failure_node": 3
+        },
+        {
+          "description": "Carefully pick the lock on the door.",
+          "stat": "DEX",
+          "dc": 14,
+          "success_node": 4,
+          "failure_node": 5
+        },
+        {
+          "description": "Walk away. Adventuring is too scary.",
+          "stat": "NONE",
+          "success_node": 99
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "narrative": "SMASH! The door flies open, crushing a goblin that was standing behind it. You enter the cave victoriously.",
+      "choices": []
+    },
+    {
+      "id": 3,
+      "narrative": "Ouch! You stub your toe on the iron door. The door doesn't budge. Now they know you are here.",
+      "choices": []
+    },
+    {
+      "id": 4,
+      "narrative": "CLICK. You masterfully unlock the door and slip inside unnoticed. Stealth is your middle name.",
+      "choices": []
+    },
+    {
+      "id": 5,
+      "narrative": "SNAP. Your lockpick breaks in the keyhole. You are locked out.",
+      "choices": []
+    },
+    {
+      "id": 99,
+      "narrative": "You decide adventuring isn't for you and go home to become a simple turnip farmer. The end.",
+      "choices": []
+    }
+  ]
+}
