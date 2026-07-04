@@ -8,28 +8,50 @@
 Engine::Engine(int width, int height) {
     m_Renderer = new Renderer(width, height);
     m_IsRunning = true;
-    m_ActiveState = nullptr;
 
     // Start with the Main Menu state
     ChangeState(new MainMenuState(this));
 }
 
 Engine::~Engine() {
-    if (m_ActiveState) {
-        m_ActiveState->OnExit();
-        delete m_ActiveState;
+    while (!m_States.empty()) {
+        m_States.back()->OnExit();
+        delete m_States.back();
+        m_States.pop_back();
     }
     delete m_Renderer;
 }
 
 void Engine::ChangeState(GameState* newState) {
-    if (m_ActiveState) {
-        m_ActiveState->OnExit();
-        delete m_ActiveState;
+    if (!m_States.empty()) {
+        m_States.back()->OnExit();
+        delete m_States.back();
+        m_States.pop_back();
     }
-    m_ActiveState = newState;
-    if (m_ActiveState) {
-        m_ActiveState->OnEnter();
+    m_States.push_back(newState);
+    if (newState) {
+        newState->OnEnter();
+    }
+}
+
+void Engine::PushState(GameState* newState) {
+    if (!m_States.empty()) {
+        m_States.back()->OnPause();
+    }
+    m_States.push_back(newState);
+    if (newState) {
+        newState->OnEnter();
+    }
+}
+
+void Engine::PopState() {
+    if (!m_States.empty()) {
+        m_States.back()->OnExit();
+        delete m_States.back();
+        m_States.pop_back();
+    }
+    if (!m_States.empty()) {
+        m_States.back()->OnResume();
     }
 }
 
@@ -60,22 +82,21 @@ void Engine::ProcessInput() {
         Quit();
     }
 
-    if (m_ActiveState) {
-        m_ActiveState->ProcessInput();
+    if (!m_States.empty()) {
+        m_States.back()->ProcessInput();
     }
 }
 
 void Engine::Update(float deltaTime) {
-    if (m_ActiveState) {
-        m_ActiveState->Update(deltaTime);
+    if (!m_States.empty()) {
+        m_States.back()->Update(deltaTime);
     }
 }
 
 void Engine::Render() {
-    if (m_ActiveState) {
-        m_ActiveState->Render(m_Renderer);
-    } else {
-        m_Renderer->Clear();
-        m_Renderer->Present();
+    m_Renderer->Clear();
+    for (GameState* state : m_States) {
+        state->Render(m_Renderer);
     }
+    m_Renderer->Present();
 }

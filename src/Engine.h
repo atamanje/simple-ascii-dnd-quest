@@ -1,6 +1,8 @@
 #pragma once
 #include "Renderer.h"
 #include <chrono>
+#include <vector>
+#include "GameSession.h"
 
 class GameState;
 
@@ -11,7 +13,12 @@ public:
 
     void Run();
     void Quit() { m_IsRunning = false; }
+    
     void ChangeState(GameState* newState);
+    void PushState(GameState* newState);
+    void PopState();
+    
+    GameSession* GetSession() { return &m_Session; }
 
 private:
     void ProcessInput();
@@ -21,5 +28,6 @@ private:
     Renderer* m_Renderer;
     bool m_IsRunning;
 
-    GameState* m_ActiveState;
+    std::vector<GameState*> m_States;
+    GameSession m_Session;
 };
