@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Inventory.h"
 
 struct AbilityScores {
     int Strength = 10;
@@ -49,6 +50,10 @@ public:
     // Helper to get modifier by string name (e.g. "STR", "DEX")
     int GetStatModifier(const std::string& statName) const;
 
+    int GetCarryingCapacity() const { return m_Stats.Strength * 15; }
+    Inventory& GetInventory() { return m_Inventory; }
+    const Inventory& GetInventory() const { return m_Inventory; }
+
     void TakeDamage(int amount);
     void Heal(int amount);
 
@@ -58,6 +63,7 @@ private:
     CharacterClass m_Class;
     
     AbilityScores m_Stats;
+    Inventory m_Inventory;
 
     int m_MaxHP;
     int m_CurrentHP;
