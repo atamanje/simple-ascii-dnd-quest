@@ -4,8 +4,9 @@
 #include "Renderer.h"
 #include "Dice.h"
 #include "MainMenuState.h"
-#include "ExplorationState.h"
+#include "StoryState.h"
 #include <windows.h>
+#include <fstream>
 
 CharacterCreatorState::CharacterCreatorState(Engine* engine)
     : m_Engine(engine), m_Step(CreationStep::Name), m_SelectedSpeciesIndex(0), m_SelectedClassIndex(0),
@@ -85,12 +86,17 @@ void CharacterCreatorState::ProcessInput() {
     }
     else if (m_Step == CreationStep::Confirm) {
         if (Input::IsKeyPressed(VK_RETURN)) {
-            // Instantiate the player and pass to session
+            std::ofstream log("trace.log", std::ios::app);
+            log << "1. Creating player\n";
             Player* newPlayer = new Player(m_Name, (Species)m_SelectedSpeciesIndex, (CharacterClass)m_SelectedClassIndex, m_RolledStats);
+            log << "2. Setting session player\n";
             m_Engine->GetSession()->SetPlayer(newPlayer);
             
-            // Transition to ExplorationState
-            m_Engine->ChangeState(new ExplorationState(m_Engine));
+            log << "3. Creating StoryState\n";
+            auto* newState = new StoryState(m_Engine, *newPlayer);
+            log << "4. Changing State\n";
+            m_Engine->ChangeState(newState);
+            log << "5. Done changing state\n";
         }
     }
 }

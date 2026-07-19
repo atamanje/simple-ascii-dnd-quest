@@ -1,8 +1,9 @@
 #pragma once
 #include "GameState.h"
-#include "QuestManager.h"
+#include "GenerativeDM.h"
 #include "Player.h"
 #include <string>
+#include <future>
 
 class Engine;
 
@@ -18,23 +19,23 @@ public:
 private:
     Engine* m_Engine;
     Player m_Player;
-    QuestManager m_QuestManager;
+    GenerativeDM m_DM;
     
-    int m_SelectedIndex;
+    std::string m_CurrentInput;
+    std::string m_CurrentNarrative;
+    
+    // Async request state
+    bool m_IsWaitingForDM;
+    float m_WaitTimer;
+    std::future<DMResponse> m_DMResponseFuture;
     
     // Dice rolling animation state
     bool m_IsRollingDice;
     float m_RollTimer;
     int m_LastRollResult;
     int m_LastTotalResult;
-    std::string m_RollMessage;
+    DMResponse m_PendingDMAction;
     
-    // Art rendering state
-    std::vector<std::string> m_ArtFrames;
-    int m_CurrentArtFrame;
-    float m_ArtFrameTimer;
-    std::string m_LoadedArtPath;
-    
-    void ResolveChoice(const Choice& choice);
-    void LoadArtAsset(const std::string& filepath);
+    void RequestActionFromDM(const std::string& action);
+    void RequestRollResolutionFromDM(int rollTotal);
 };

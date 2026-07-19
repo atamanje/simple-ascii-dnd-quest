@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include <string>
 
 Renderer::Renderer(int width, int height) : m_Width(width), m_Height(height) {
     m_ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -52,6 +53,43 @@ void Renderer::DrawString(int x, int y, const char* str, WORD color) {
         }
         str++;
     }
+}
+
+void Renderer::DrawStringWrapped(int x, int y, const char* str, int maxWidth, WORD color) {
+    int cx = x;
+    int cy = y;
+    std::string word;
+    
+    auto printWord = [&]() {
+        if (cx + (int)word.length() > maxWidth) {
+            cy++;
+            cx = x;
+        }
+        for (char c : word) {
+            DrawChar(cx++, cy, c, color);
+        }
+        word.clear();
+    };
+
+    while (*str) {
+        if (*str == '\n') {
+            printWord();
+            cy++;
+            cx = x;
+        } else if (*str == ' ') {
+            printWord();
+            if (cx < maxWidth) {
+                DrawChar(cx++, cy, ' ', color);
+            } else {
+                cy++;
+                cx = x;
+            }
+        } else {
+            word += *str;
+        }
+        str++;
+    }
+    printWord();
 }
 
 void Renderer::Present() {

@@ -5,11 +5,14 @@
 #include <thread>
 #include <windows.h> // For VK_ESCAPE
 
+#include "StoryState.h"
+#include "Player.h"
+
 Engine::Engine(int width, int height) {
     m_Renderer = new Renderer(width, height);
     m_IsRunning = true;
 
-    // Start with the Main Menu state
+    // Start with the Main Menu
     ChangeState(new MainMenuState(this));
 }
 

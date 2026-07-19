@@ -10,6 +10,7 @@ public:
     void Clear();
     void DrawChar(int x, int y, char c, WORD color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     void DrawString(int x, int y, const char* str, WORD color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+    void DrawStringWrapped(int x, int y, const char* str, int maxWidth, WORD color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     void Present();
 
     int GetWidth() const { return m_Width; }
