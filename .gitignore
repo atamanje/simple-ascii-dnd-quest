@@ -2,3 +2,5 @@
 *.vcxproj
 /bin
 *.sln
+*.filters
+*.user
